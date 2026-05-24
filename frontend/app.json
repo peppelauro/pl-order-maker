@@ -42,6 +42,12 @@
           "backgroundColor": "#000"
         }
       ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera for scanning product barcodes"
+        }
+      ],
       "@react-native-community/datetimepicker"
     ],
     "experiments": {
