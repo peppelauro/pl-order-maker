@@ -16,29 +16,29 @@ export default function OrderLayout() {
       <Stack.Screen
         name="select-customer"
         options={{
-          title: 'Select Customer',
-          headerBackTitle: 'Back',
+          title: 'Seleziona Cliente',
+          headerBackTitle: 'Indietro',
         }}
       />
       <Stack.Screen
         name="select-pos"
         options={{
-          title: 'Select Location',
-          headerBackTitle: 'Back',
+          title: 'Seleziona Ubicazione',
+          headerBackTitle: 'Indietro',
         }}
       />
       <Stack.Screen
         name="add-products"
         options={{
-          title: 'Add Products',
-          headerBackTitle: 'Back',
+          title: 'Aggiungi Prodotti',
+          headerBackTitle: 'Indietro',
         }}
       />
       <Stack.Screen
         name="review"
         options={{
-          title: 'Review Order',
-          headerBackTitle: 'Back',
+          title: 'Rivedi Ordine',
+          headerBackTitle: 'Indietro',
         }}
       />
     </Stack>

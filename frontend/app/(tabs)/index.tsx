@@ -49,10 +49,10 @@ export default function NewOrderScreen() {
       setProducts(productsData);
       setLastSyncTime(new Date().toISOString());
       
-      Alert.alert('Success', 'Data synced successfully!');
+      Alert.alert('Successo', 'Dati sincronizzati con successo!');
     } catch (error: any) {
       console.error('Sync error:', error);
-      Alert.alert('Sync Failed', 'Failed to sync data. Please try again.');
+      Alert.alert('Sincronizzazione Fallita', 'Impossibile sincronizzare i dati. Riprova.');
     } finally {
       setSyncing(false);
       setRefreshing(false);
@@ -66,7 +66,7 @@ export default function NewOrderScreen() {
 
   const handleCreateOrder = () => {
     if (customers.length === 0) {
-      Alert.alert('No Data', 'Please sync data first');
+      Alert.alert('Nessun Dato', 'Sincronizza i dati prima di procedere');
       return;
     }
     router.push('/order/select-customer');
@@ -82,38 +82,51 @@ export default function NewOrderScreen() {
     >
       <View style={styles.header}>
         <Ionicons name="receipt" size={48} color="#007AFF" />
-        <Text style={styles.title}>Welcome, {agent?.name}!</Text>
-        <Text style={styles.subtitle}>Create new orders for your customers</Text>
+        <Text style={styles.title}>Benvenuto, {agent?.name}!</Text>
+        <Text style={styles.subtitle}>Crea nuovi ordini per i tuoi clienti</Text>
       </View>
+
+      <TouchableOpacity
+        style={[styles.createButton, customers.length === 0 && styles.buttonDisabled]}
+        onPress={handleCreateOrder}
+        disabled={customers.length === 0}
+      >
+        <Ionicons name="add-circle" size={32} color="#fff" />
+        <View style={styles.createButtonContent}>
+          <Text style={styles.createButtonText}>Crea Nuovo Ordine</Text>
+          <Text style={styles.createButtonSubtext}>Seleziona cliente e aggiungi prodotti</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color="#fff" />
+      </TouchableOpacity>
 
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Ionicons name="sync" size={24} color="#007AFF" />
-          <Text style={styles.cardTitle}>Data Sync</Text>
+          <Text style={styles.cardTitle}>Sincronizzazione Dati</Text>
         </View>
         {lastSyncTime ? (
           <View>
-            <Text style={styles.syncText}>Last synced:</Text>
+            <Text style={styles.syncText}>Ultima sincronizzazione:</Text>
             <Text style={styles.syncTime}>
-              {new Date(lastSyncTime).toLocaleString()}
+              {new Date(lastSyncTime).toLocaleString('it-IT')}
             </Text>
             <View style={styles.statsRow}>
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>{customers.length}</Text>
-                <Text style={styles.statLabel}>Customers</Text>
+                <Text style={styles.statLabel}>Clienti</Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>{useStore.getState().pointsOfSale.length}</Text>
-                <Text style={styles.statLabel}>Locations</Text>
+                <Text style={styles.statLabel}>Ubicazioni</Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>{useStore.getState().products.length}</Text>
-                <Text style={styles.statLabel}>Products</Text>
+                <Text style={styles.statLabel}>Prodotti</Text>
               </View>
             </View>
           </View>
         ) : (
-          <Text style={styles.noSyncText}>No data synced yet</Text>
+          <Text style={styles.noSyncText}>Nessun dato sincronizzato</Text>
         )}
         <TouchableOpacity
           style={[styles.syncButton, syncing && styles.buttonDisabled]}
@@ -125,33 +138,20 @@ export default function NewOrderScreen() {
           ) : (
             <>
               <Ionicons name="sync" size={20} color="#fff" />
-              <Text style={styles.syncButtonText}>Sync Now</Text>
+              <Text style={styles.syncButtonText}>Sincronizza Ora</Text>
             </>
           )}
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={[styles.createButton, customers.length === 0 && styles.buttonDisabled]}
-        onPress={handleCreateOrder}
-        disabled={customers.length === 0}
-      >
-        <Ionicons name="add-circle" size={32} color="#fff" />
-        <View style={styles.createButtonContent}>
-          <Text style={styles.createButtonText}>Create New Order</Text>
-          <Text style={styles.createButtonSubtext}>Select customer and add products</Text>
-        </View>
-        <Ionicons name="chevron-forward" size={24} color="#fff" />
-      </TouchableOpacity>
-
       <View style={styles.infoCard}>
         <Ionicons name="information-circle" size={24} color="#007AFF" />
         <View style={styles.infoContent}>
-          <Text style={styles.infoTitle}>How to create an order:</Text>
-          <Text style={styles.infoText}>1. Select a customer</Text>
-          <Text style={styles.infoText}>2. Choose point of sale location</Text>
-          <Text style={styles.infoText}>3. Scan or search for products</Text>
-          <Text style={styles.infoText}>4. Set delivery date and save</Text>
+          <Text style={styles.infoTitle}>Come creare un ordine:</Text>
+          <Text style={styles.infoText}>1. Seleziona un cliente</Text>
+          <Text style={styles.infoText}>2. Scegli il punto vendita</Text>
+          <Text style={styles.infoText}>3. Scansiona o cerca prodotti</Text>
+          <Text style={styles.infoText}>4. Imposta data di consegna e salva</Text>
         </View>
       </View>
     </ScrollView>

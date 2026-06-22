@@ -38,7 +38,7 @@ export default function LoginScreen() {
       const data = await agentAPI.getAll();
       setAgents(data);
     } catch (error: any) {
-      Alert.alert('Error', 'Failed to load agents. Please check your connection.');
+      Alert.alert('Errore', 'Impossibile caricare gli agenti. Controlla la connessione.');
       console.error('Error loading agents:', error);
     } finally {
       setLoading(false);
@@ -55,7 +55,7 @@ export default function LoginScreen() {
         router.replace('/(tabs)');
       }
     } catch (error: any) {
-      Alert.alert('Login Failed', error.response?.data?.detail || 'Invalid credentials');
+      Alert.alert('Accesso Fallito', error.response?.data?.detail || 'Credenziali non valide');
       console.error('Login error:', error);
     } finally {
       setLoggingIn(false);
@@ -84,7 +84,7 @@ export default function LoginScreen() {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Loading agents...</Text>
+        <Text style={styles.loadingText}>Caricamento agenti...</Text>
       </View>
     );
   }
@@ -93,17 +93,17 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Ionicons name="receipt" size={48} color="#007AFF" />
-        <Text style={styles.title}>Sales Order App</Text>
-        <Text style={styles.subtitle}>Select your profile to continue</Text>
+        <Text style={styles.title}>App Ordini Vendita</Text>
+        <Text style={styles.subtitle}>Seleziona il tuo profilo per continuare</Text>
       </View>
 
       {agents.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="people-outline" size={64} color="#ccc" />
-          <Text style={styles.emptyText}>No agents found</Text>
-          <Text style={styles.emptySubtext}>Please seed database first</Text>
+          <Text style={styles.emptyText}>Nessun agente trovato</Text>
+          <Text style={styles.emptySubtext}>Sincronizza prima il database</Text>
           <TouchableOpacity style={styles.retryButton} onPress={loadAgents}>
-            <Text style={styles.retryButtonText}>Retry</Text>
+            <Text style={styles.retryButtonText}>Riprova</Text>
           </TouchableOpacity>
         </View>
       ) : (
