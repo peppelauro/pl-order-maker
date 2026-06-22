@@ -26,7 +26,7 @@ export default function NewOrderScreen() {
     }
   }, []);
 
-  const handleSync = async () => {
+  const handleSync = async (showAlert = false) => {
     try {
       setSyncing(true);
       
@@ -49,7 +49,9 @@ export default function NewOrderScreen() {
       setProducts(productsData);
       setLastSyncTime(new Date().toISOString());
       
-      Alert.alert('Successo', 'Dati sincronizzati con successo!');
+      if (showAlert) {
+        Alert.alert('Successo', 'Dati sincronizzati con successo!');
+      }
     } catch (error: any) {
       console.error('Sync error:', error);
       Alert.alert('Sincronizzazione Fallita', 'Impossibile sincronizzare i dati. Riprova.');
@@ -61,7 +63,7 @@ export default function NewOrderScreen() {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    handleSync();
+    handleSync(true);
   };
 
   const handleCreateOrder = () => {
@@ -130,7 +132,7 @@ export default function NewOrderScreen() {
         )}
         <TouchableOpacity
           style={[styles.syncButton, syncing && styles.buttonDisabled]}
-          onPress={handleSync}
+          onPress={() => handleSync(true)}
           disabled={syncing}
         >
           {syncing ? (
