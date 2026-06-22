@@ -1,0 +1,57 @@
+{
+  "name": "pl-order-maker",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "workspace",
+  "workspaceFolder": "/workspaces/pl-order-maker",
+  "runServices": [
+    "workspace",
+    "mongo"
+  ],
+  "forwardPorts": [
+    8001,
+    8081,
+    19006,
+    19000,
+    19001,
+    19002
+  ],
+  "portsAttributes": {
+    "8001": {
+      "label": "FastAPI backend"
+    },
+    "8081": {
+      "label": "Expo dev server"
+    },
+    "19006": {
+      "label": "Expo web fallback"
+    },
+    "19000": {
+      "label": "Expo Metro"
+    },
+    "19001": {
+      "label": "Expo debugger"
+    },
+    "19002": {
+      "label": "Expo devtools"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh",
+  "postStartCommand": "bash .devcontainer/scripts/post-start.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "expo.vscode-expo-tools"
+      ]
+    }
+  },
+  "remoteUser": "node"
+}

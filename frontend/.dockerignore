@@ -1,0 +1,6 @@
+node_modules
+.expo
+.metro-cache
+dist
+Dockerfile
+.DS_Store

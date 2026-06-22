@@ -73,6 +73,31 @@ A full-stack mobile application for sales agents to create and manage customer o
 
 ## 🚀 Getting Started
 
+### Dev Container
+
+The repository includes a `.devcontainer/` setup that provisions:
+- a development container with Node.js 20 and Python 3
+- a MongoDB 7 service required by the backend
+- forwarded ports for backend (`8001`) and frontend web (`8081`, with `19006` also exposed as Expo fallback)
+
+After opening the project in the dev container:
+
+```bash
+bash .devcontainer/scripts/start-all.sh
+```
+
+Then access:
+- Frontend: `http://localhost:8081`
+- Fallback frontend URL if Expo switches port: `http://localhost:19006`
+- Backend API: `http://localhost:8001/docs`
+
+To start services separately:
+
+```bash
+bash .devcontainer/scripts/start-backend.sh
+bash .devcontainer/scripts/start-frontend.sh
+```
+
 ### Prerequisites
 - Node.js & Yarn
 - Python 3.8+

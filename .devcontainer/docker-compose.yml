@@ -1,0 +1,32 @@
+services:
+  workspace:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspaces/pl-order-maker:cached
+    command: sleep infinity
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URL: mongodb://mongo:27017
+      DB_NAME: sales_order_db
+      EXPO_PUBLIC_BACKEND_URL: http://localhost:8001
+    ports:
+      - "8001:8001"
+      - "8081:8081"
+      - "19006:19006"
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongo-data:
