@@ -45,6 +45,8 @@ export default function AddProductsScreen() {
   const [showScanner, setShowScanner] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
+  const [lastScannedCode, setLastScannedCode] = useState<string>('');
+  const [scanCount, setScanCount] = useState(0);
 
   const customerId = params.customerId as string;
   const customerName = params.customerName as string;
@@ -102,7 +104,7 @@ export default function AddProductsScreen() {
       setOrderProducts([...orderProducts, newProduct]);
     }
 
-    Alert.alert('Success', `${product.name} added to order`);
+    // Non mostrare alert durante la scansione multipla, solo feedback visivo
   };
 
   const updateQuantity = (productId: string, change: number) => {
@@ -144,14 +146,23 @@ export default function AddProductsScreen() {
 
   const openScanner = () => {
     if (hasPermission === null) {
-      Alert.alert('Permission Pending', 'Requesting camera permission...');
+      Alert.alert('Permesso In Attesa', 'Richiesta permesso fotocamera...');
       return;
     }
     if (hasPermission === false) {
-      Alert.alert('No Permission', 'Camera permission is required to scan barcodes');
+      Alert.alert('Nessun Permesso', 'Il permesso della fotocamera è necessario per scansionare i barcode');
       return;
     }
+    setScanCount(0);
     setShowScanner(true);
+  };
+
+  const closeScanner = () => {
+    setShowScanner(false);
+    if (scanCount > 0) {
+      Alert.alert('Scansione Completata', `${scanCount} prodotto(i) aggiunto(i) all'ordine`);
+    }
+    setScanCount(0);
   };
 
   const totalAmount = orderProducts.reduce((sum, p) => sum + p.total, 0);
@@ -278,7 +289,7 @@ export default function AddProductsScreen() {
         </TouchableOpacity>
       )}
 
-      <Modal visible={showScanner} animationType="slide" onRequestClose={() => setShowScanner(false)}>
+      <Modal visible={showScanner} animationType="slide" onRequestClose={closeScanner}>
         <View style={styles.scannerContainer}>
           <CameraView
             onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
@@ -288,15 +299,50 @@ export default function AddProductsScreen() {
             }}
           />
           <View style={styles.scannerOverlay}>
-            <Text style={styles.scannerText}>Align barcode within frame</Text>
+            <View style={styles.scannerHeader}>
+              <Text style={styles.scannerTitle}>Scansiona Barcode</Text>
+              <Text style={styles.scannerSubtitle}>Scansiona più prodotti consecutivamente</Text>
+              {scanCount > 0 && (
+                <View style={styles.scanCountBadge}>
+                  <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                  <Text style={styles.scanCountText}>{scanCount} prodotto(i) aggiunto(i)</Text>
+                </View>
+              )}
+            </View>
+            
             <View style={styles.scannerFrame} />
-            <TouchableOpacity
-              style={styles.closeScannerButton}
-              onPress={() => setShowScanner(false)}
-            >
-              <Ionicons name="close-circle" size={48} color="#fff" />
-            </TouchableOpacity>
+            
+            <View style={styles.scannerFooter}>
+              <Text style={styles.scannerHint}>Inquadra il barcode nel riquadro</Text>
+              <TouchableOpacity
+                style={styles.closeScannerButton}
+                onPress={closeScanner}
+              >
+                <Ionicons name="close-circle" size={24} color="#fff" />
+                <Text style={styles.closeScannerText}>Chiudi Scanner</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+
+          {/* Lista prodotti scansionati nella sessione corrente */}
+          {orderProducts.length > 0 && (
+            <View style={styles.scannedProductsList}>
+              <Text style={styles.scannedProductsTitle}>Prodotti nell'ordine:</Text>
+              {orderProducts.slice(-3).reverse().map((product, index) => (
+                <View key={index} style={styles.scannedProductItem}>
+                  <Text style={styles.scannedProductName} numberOfLines={1}>
+                    {product.product_name}
+                  </Text>
+                  <Text style={styles.scannedProductQty}>x{product.quantity}</Text>
+                </View>
+              ))}
+              {orderProducts.length > 3 && (
+                <Text style={styles.moreProductsText}>
+                  +{orderProducts.length - 3} altri...
+                </Text>
+              )}
+            </View>
+          )}
         </View>
       </Modal>
     </View>
@@ -538,26 +584,110 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 60,
+    paddingVertical: 40,
   },
-  scannerText: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: '600',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  scannerHeader: {
+    alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
+    paddingTop: 20,
+  },
+  scannerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  scannerSubtitle: {
+    fontSize: 14,
+    color: '#ccc',
+    textAlign: 'center',
+  },
+  scanCountBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(52, 199, 89, 0.9)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginTop: 12,
+  },
+  scanCountText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
   scannerFrame: {
     width: 280,
     height: 280,
-    borderWidth: 2,
-    borderColor: '#fff',
+    borderWidth: 3,
+    borderColor: '#34C759',
     borderRadius: 12,
+    alignSelf: 'center',
+  },
+  scannerFooter: {
+    alignItems: 'center',
+    paddingBottom: 40,
+  },
+  scannerHint: {
+    fontSize: 16,
+    color: '#fff',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   closeScannerButton: {
-    marginBottom: 20,
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 59, 48, 0.9)',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+    alignItems: 'center',
+    gap: 8,
+  },
+  closeScannerText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  scannedProductsList: {
+    position: 'absolute',
+    bottom: 140,
+    left: 20,
+    right: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    borderRadius: 12,
+    padding: 12,
+  },
+  scannedProductsTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  scannedProductItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  scannedProductName: {
+    fontSize: 14,
+    color: '#fff',
+    flex: 1,
+  },
+  scannedProductQty: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#34C759',
+    marginLeft: 8,
+  },
+  moreProductsText: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 4,
+    textAlign: 'center',
   },
 });
