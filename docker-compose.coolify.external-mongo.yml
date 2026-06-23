@@ -16,17 +16,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      MONGO_URL: mongodb://mongo:27017
-      DB_NAME: sales_order_db
-    depends_on:
-      - mongo
+      MONGO_URL: ${MONGO_URL}
+      DB_NAME: ${DB_NAME:-sales_order_db}
     restart: unless-stopped
-
-  mongo:
-    image: mongo:7
-    volumes:
-      - mongo-data:/data/db
-    restart: unless-stopped
-
-volumes:
-  mongo-data:
